@@ -4,6 +4,7 @@ class User {
   constructor(body) {
     this.body = body;
   }
+  //로그인
   async login() {
     const body = this.body;
     try {
@@ -21,6 +22,7 @@ class User {
     }
   }
 
+  //회원가입
   register() {
     const response = UsersModel.save(this.body);
     return response;
