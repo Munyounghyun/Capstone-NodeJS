@@ -13,9 +13,9 @@ const login = async (req, res) => {
 };
 
 //회원가입
-const signup = (req, res, next) => {
+const signup = async (req, res, next) => {
   const user = new User(req.body);
-  const response = user.register();
+  const response = await user.register();
   return res.json(response);
 };
 

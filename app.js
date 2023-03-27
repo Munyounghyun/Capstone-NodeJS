@@ -3,13 +3,11 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const dotenv = require("dotenv");
 
 const indexRouter = require("./src/routes/index");
 const usersRouter = require("./src/routes/users/index");
 const adminRouter = require("./src/routes/admin/index");
 
-dotenv.config();
 const app = express();
 
 app.use(logger("dev"));

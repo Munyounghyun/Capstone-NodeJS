@@ -1,8 +1,8 @@
-const { getHashes } = require("crypto");
+// const { getHashes } = require("crypto");
 var express = require("express");
 var router = express.Router();
-
 const usersCtrl = require("./usersCtrl");
+
 router.get("/", usersCtrl.userspage);
 
 //로그인

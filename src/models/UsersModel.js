@@ -4,8 +4,8 @@ class UsersModel {
   //로그인 - id 넘겨받아서 해당 유저 있는지 체크
   static getUserInfo(id) {
     return new Promise((resolve, reject) => {
-      db.query("select * from users where id=?", [id], (err, data) => {
-        if (err) reject(err);
+      db.query("select * from hifive where id = ?", [id], (err, data) => {
+        if (err) reject(`${err}`);
         resolve(data[0]);
       });
     });
@@ -15,10 +15,10 @@ class UsersModel {
   static save(userInfo) {
     return new Promise((resolve, reject) => {
       db.query(
-        "insert into users(id,pwd,creditNum) values(?,?,?);",
-        [id],
+        "insert into hifive(id,pwd,name,credit_number) values(?,?,?,?);",
+        [userInfo.id, userInfo.pwd, userInfo.name, userInfo.credit_number],
         (err) => {
-          if (err) reject({ success: false });
+          if (err) reject(`${err}`);
           resolve({ success: true });
         }
       );

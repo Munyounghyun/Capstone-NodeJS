@@ -23,9 +23,13 @@ class User {
   }
 
   //회원가입
-  register() {
-    const response = UsersModel.save(this.body);
-    return response;
+  async register() {
+    try {
+      const response = await UsersModel.save(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
   }
 }
 
