@@ -1,6 +1,4 @@
-//dubby data///////////////////////////////
 const User = require("../../models/User");
-//////////////////////////////////////////////
 
 const userspage = (req, res) => {
   res.send("유저페이지");
@@ -19,8 +17,11 @@ const signup = async (req, res, next) => {
   return res.json(response);
 };
 
+const pay = async (req, res, next) => {};
+
 module.exports = {
   userspage,
   login,
   signup,
+  pay,
 };
