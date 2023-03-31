@@ -4,21 +4,15 @@ class User {
   constructor(body) {
     this.body = body;
   }
-  //로그인
+
+  //로그인 테스트
   async login() {
     const body = this.body;
     try {
-      const { id, pwd } = await UsersModel.getUserInfo(body.id);
-
-      if (id) {
-        if (id === body.id && pwd === body.pwd) {
-          return { success: true };
-        }
-        return { success: false }; //비밀번호 틀림
-      }
-      return { success: false }; //존재하는 아이디 없음
+      const response = await UsersModel.getUserInfo(body.id, body.pwd);
+      return response;
     } catch (err) {
-      return { success: false };
+      return err;
     }
   }
 
