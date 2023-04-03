@@ -25,6 +25,15 @@ class User {
       return err;
     }
   }
+  //카드 등록
+  async payregist() {
+    try {
+      const response = await UsersModel.payregistmode(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
 }
 
 module.exports = User;

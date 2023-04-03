@@ -5,14 +5,14 @@ const util = require("util");
 const randomBytesPromise = util.promisify(crypto.randomBytes);
 const pbkdf2Promise = util.promisify(crypto.pbkdf2);
 
-//비밀번호로 salt 생성
+//비밀번호로 salt 생성함수
 const createSalt = async () => {
   const buf = await randomBytesPromise(64);
 
   return buf.toString("base64");
 };
 
-//회원가입시 패스워드 암호화
+//회원가입시 패스워드 암호화 함수
 const createHashedPassword = async (password) => {
   const salt = await createSalt();
   const key = await pbkdf2Promise(password, salt, 100, 64, "sha512");
@@ -21,7 +21,7 @@ const createHashedPassword = async (password) => {
   return { hashedPassword, salt };
 };
 
-//로그인시 암호화 검사
+//로그인시 암호화 검사함수
 const verifyPassword = async (password, userSalt, userPassword) => {
   const key = await pbkdf2Promise(password, userSalt, 100, 64, "sha512");
   const hashedPassword = key.toString("base64");
@@ -65,6 +65,7 @@ class UsersModel {
       );
     });
   }
+  static payregistmd(cardInfo) {}
 }
 
 module.exports = UsersModel;

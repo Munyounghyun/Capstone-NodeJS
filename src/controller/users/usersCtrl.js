@@ -4,6 +4,7 @@ const userspage = (req, res) => {
   res.send("유저페이지");
 };
 
+//로그인
 const login = async (req, res) => {
   const user = new User(req.body);
   const response = await user.login();
@@ -17,11 +18,16 @@ const signup = async (req, res, next) => {
   return res.json(response);
 };
 
-const pay = async (req, res, next) => {};
+//카드 등록
+const payregistCtrl = async (req, res, next) => {
+  const user = new User(req.body);
+  const response = await user.payregist();
+  return res.json(response);
+};
 
 module.exports = {
   userspage,
   login,
   signup,
-  pay,
+  payregistCtrl,
 };
