@@ -12,9 +12,16 @@ const login = async (req, res) => {
 };
 
 //회원가입
-const signup = async (req, res, next) => {
+const signup = async (req, res) => {
   const user = new User(req.body);
   const response = await user.register();
+  return res.json(response);
+};
+
+//지문 등록
+const handRegistCtrl = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.handRegist();
   return res.json(response);
 };
 
@@ -29,5 +36,6 @@ module.exports = {
   userspage,
   login,
   signup,
+  handRegistCtrl,
   payregistCtrl,
 };

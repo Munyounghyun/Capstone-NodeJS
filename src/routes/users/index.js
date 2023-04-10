@@ -2,8 +2,8 @@
 var express = require("express");
 var router = express.Router();
 const usersCtrl = require("../../controller/users/usersCtrl");
-
 const axios = require("axios");
+require("dotenv").config();
 
 //필요없음...
 router.get("/", usersCtrl.userspage);
@@ -11,11 +11,14 @@ router.get("/", usersCtrl.userspage);
 //로그인
 router.post("/login", usersCtrl.login);
 
+//지문 등록
+router.post("/hand-regist", usersCtrl.handRegistCtrl);
+
 //회원가입
 router.post("/register", usersCtrl.signup);
 
 //결제 관련 test -- 빌링키 받아오기
-router.post("/subscriptions/issue-billing", async (req, res) => {
+router.post("/testest", async (req, res) => {
   try {
     const {
       card_number, // 카드 번호
@@ -37,7 +40,20 @@ router.post("/subscriptions/issue-billing", async (req, res) => {
     });
 
     const access_token = getToken.data.response.access_token; // 인증 토큰
-    console.log(access_token);
+
+    const useToken = await axios({
+      url: `https://api.iamport.kr/payments/${process.env.PORTONE_API_KEY}`,
+      method: "get", // GET method
+      headers: {
+        // "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        // 발행된 액세스 토큰
+        Authorization: "Bearer ",
+        access_token,
+      },
+    });
+    console.log(useToken);
+
     // 빌링키 발급 요청
     const issueBilling = await axios({
       url: `https://api.iamport.kr/subscribe/customers/${customer_uid}`,
@@ -61,6 +77,7 @@ router.post("/subscriptions/issue-billing", async (req, res) => {
       });
     } else {
       // 빌링키 발급 실패
+      console.log("failed, ", message);
       res.send({ status: "failed", message });
     }
   } catch (e) {

@@ -9,7 +9,11 @@ class User {
   async login() {
     const body = this.body;
     try {
-      const response = await UsersModel.getUserInfo(body.id, body.pwd);
+      const response = await UsersModel.getUserInfo(
+        body.id,
+        body.pwd,
+        body.hand
+      );
       return response;
     } catch (err) {
       return err;
@@ -25,6 +29,17 @@ class User {
       return err;
     }
   }
+
+  //지문 등록
+  async handRegist() {
+    try {
+      const response = await UsersModel.handRegistmd(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
   //카드 등록
   async payregist() {
     try {
