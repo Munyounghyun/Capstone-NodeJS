@@ -1,7 +1,5 @@
-const { rejects } = require("assert");
 const db = require("../config/db");
 const crypto = require("crypto");
-const { resolve } = require("path");
 const util = require("util");
 
 const randomBytesPromise = util.promisify(crypto.randomBytes);
@@ -39,12 +37,22 @@ class UsersModel {
       //아이디, 비밀번호를 입력받았을때
       if (hand == undefined || hand === "") {
         db.query("select * from test where id=?", [id], async (err, data) => {
-          if (err) reject(`${err}`);
-          const checkPwd = await verifyPassword(pwd, data[0].salt, data[0].pwd);
-          if (checkPwd) {
-            resolve(data[0]);
-          } else {
-            reject("비밀번호 오류");
+          if (err) reject({ success: false });
+          //아이디가 없을경우 에러
+          if (data.length === 0) {
+            reject({ success: false, message: "아이디 없음" });
+          } //아이디 있는경우 비밀번호 확인
+          else {
+            const checkPwd = await verifyPassword(
+              pwd,
+              data[0].salt,
+              data[0].pwd
+            );
+            if (checkPwd) {
+              resolve(data[0], { success: true });
+            } else {
+              reject({ success: false, message: "비밀번호 오류" });
+            }
           }
         });
       } else {
@@ -53,9 +61,10 @@ class UsersModel {
           "select * from test where hand=?",
           [hand],
           async (err, data) => {
-            if (err) reject(`${err}`);
-            else if (data[0] == undefined) reject("인식 오류");
-            else resolve(data[0]);
+            if (err) reject({ success: false });
+            else if (data[0] == undefined)
+              reject({ success: false, message: "인식 오류" });
+            else resolve(data[0], { success: true });
           }
         );
       }
@@ -75,7 +84,7 @@ class UsersModel {
           userInfo.credit_number,
         ],
         (err) => {
-          if (err) reject(`${err}`);
+          if (err) reject({ success: false, message: "해당 아이디 존재함" });
           resolve({ success: true });
         }
       );
@@ -90,7 +99,7 @@ class UsersModel {
         "update test set hand=? where id=?;",
         [userInfo.hand, userInfo.id],
         (err) => {
-          if (err) reject(`${err}`);
+          if (err) reject({ success: false });
           resolve({ success: true }, "지문등록 성공");
         }
       );
