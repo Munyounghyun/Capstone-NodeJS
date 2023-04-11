@@ -30,10 +30,10 @@ class User {
     }
   }
 
-  //지문 등록
-  async handRegist() {
+  //생체정보 등록
+  async bioRegist() {
     try {
-      const response = await UsersModel.handRegistmd(this.body);
+      const response = await UsersModel.bioRegistmd(this.body);
       return response;
     } catch (err) {
       return err;

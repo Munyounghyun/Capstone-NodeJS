@@ -18,10 +18,10 @@ const signup = async (req, res) => {
   return res.json(response);
 };
 
-//지문 등록
-const handRegistCtrl = async (req, res) => {
+//생체정보 등록
+const bioRegistCtrl = async (req, res) => {
   const user = new User(req.body);
-  const response = await user.handRegist();
+  const response = await user.bioRegist();
   return res.json(response);
 };
 
@@ -36,6 +36,6 @@ module.exports = {
   userspage,
   login,
   signup,
-  handRegistCtrl,
+  bioRegistCtrl,
   payregistCtrl,
 };

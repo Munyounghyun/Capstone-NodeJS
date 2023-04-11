@@ -32,44 +32,27 @@ const verifyPassword = async (password, userSalt, userPassword) => {
 
 class UsersModel {
   //로그인
-  static getUserInfo(id, pwd, hand) {
+  static getUserInfo(id, pwd) {
     return new Promise((resolve, reject) => {
       //아이디, 비밀번호를 입력받았을때
-      if (hand == undefined || hand === "") {
-        db.query("select * from test where id=?", [id], async (err, data) => {
-          if (err) reject({ success: false });
-          //아이디가 없을경우 에러
-          if (data.length === 0) {
-            reject({ success: false, message: "아이디 없음" });
-          } //아이디 있는경우 비밀번호 확인
-          else {
-            const checkPwd = await verifyPassword(
-              pwd,
-              data[0].salt,
-              data[0].pwd
-            );
-            if (checkPwd) {
-              resolve(data[0], { success: true });
-            } else {
-              reject({ success: false, message: "비밀번호 오류" });
-            }
+      db.query("select * from test where id=?", [id], async (err, data) => {
+        if (err) reject({ success: false });
+        //아이디가 없을경우 에러
+        if (data.length === 0) {
+          reject({ success: false, message: "아이디 없음" });
+        } //아이디 있는경우 비밀번호 확인
+        else {
+          const checkPwd = await verifyPassword(pwd, data[0].salt, data[0].pwd);
+          if (checkPwd) {
+            resolve(data[0], { success: true });
+          } else {
+            reject({ success: false, message: "비밀번호 오류" });
           }
-        });
-      } else {
-        // 지문을 입력받았을때
-        db.query(
-          "select * from test where hand=?",
-          [hand],
-          async (err, data) => {
-            if (err) reject({ success: false });
-            else if (data[0] == undefined)
-              reject({ success: false, message: "인식 오류" });
-            else resolve(data[0], { success: true });
-          }
-        );
-      }
+        }
+      });
     });
   }
+
   // 회원가입
   static async save(userInfo) {
     const { hashedPassword, salt } = await createHashedPassword(userInfo.pwd);
@@ -91,16 +74,16 @@ class UsersModel {
     });
   }
 
-  //지문 등록
-  static handRegistmd(userInfo) {
+  //생체정보 등록
+  static bioRegistmd(userInfo) {
     return new Promise((resolve, reject) => {
       //추후 수정
       db.query(
-        "update test set hand=? where id=?;",
-        [userInfo.hand, userInfo.id],
+        "update test set bio_regist=?  bio_method=? where id=?;",
+        [userInfo.bio_regist, userInfo.bio_method, userInfo.id],
         (err) => {
           if (err) reject({ success: false });
-          resolve({ success: true }, "지문등록 성공");
+          resolve({ success: true }, "생체정보가 등록되었습니다."); //생체정보가 등록된 것이 아니라 방법(지문,얼굴)과,등록 여부만 업데이트
         }
       );
     });

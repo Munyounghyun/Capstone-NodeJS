@@ -12,7 +12,7 @@ router.get("/", usersCtrl.userspage);
 router.post("/login", usersCtrl.login);
 
 //지문 등록
-router.post("/hand-regist", usersCtrl.handRegistCtrl);
+router.post("/bio-regist", usersCtrl.bioRegistCtrl);
 
 //회원가입
 router.post("/register", usersCtrl.signup);
