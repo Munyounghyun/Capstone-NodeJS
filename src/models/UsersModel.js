@@ -35,7 +35,7 @@ class UsersModel {
   static getUserInfo(id, pwd) {
     return new Promise((resolve, reject) => {
       //아이디, 비밀번호를 입력받았을때
-      db.query("select * from test where id=?", [id], async (err, data) => {
+      db.query("select * from test where id=?;", [id], async (err, data) => {
         if (err) reject({ success: false });
         //아이디가 없을경우 에러
         if (data.length === 0) {
@@ -74,7 +74,22 @@ class UsersModel {
     });
   }
 
-  //생체정보 등록
+  //비밀번호 수정
+  static async changePwdmd(userInfo) {
+    const { hashedPassword, salt } = await createHashedPassword(userInfo.pwd);
+    return new Promise((resolve, reject) => {
+      db.query(
+        "update test set pwd=?,salt=? where id=?;",
+        [hashedPassword, salt, userInfo.id],
+        (err) => {
+          if (err) reject({ success: false, message: "비밀번호 수정 실패" });
+          resolve({ success: true, message: "수정 성공" });
+        }
+      );
+    });
+  }
+
+  //생체정보 등록여부
   static bioRegistmd(userInfo) {
     return new Promise((resolve, reject) => {
       //추후 수정

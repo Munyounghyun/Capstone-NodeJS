@@ -18,8 +18,15 @@ const signup = async (req, res) => {
   return res.json(response);
 };
 
-//생체정보 등록
-const bioRegistCtrl = async (req, res) => {
+//비밀번호 수정
+const changePwd = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.changePwd();
+  return res.json(response);
+};
+
+//생체정보 등록여부
+const bioRegist = async (req, res) => {
   const user = new User(req.body);
   const response = await user.bioRegist();
   return res.json(response);
@@ -36,6 +43,7 @@ module.exports = {
   userspage,
   login,
   signup,
-  bioRegistCtrl,
+  changePwd,
+  bioRegist,
   payregistCtrl,
 };

@@ -11,11 +11,14 @@ router.get("/", usersCtrl.userspage);
 //로그인
 router.post("/login", usersCtrl.login);
 
-//지문 등록
-router.post("/bio-regist", usersCtrl.bioRegistCtrl);
+//생체정보 등록여부
+router.post("/bio-regist", usersCtrl.bioRegist);
 
 //회원가입
 router.post("/register", usersCtrl.signup);
+
+//비밀번호 수정
+router.put("/change-pwd", usersCtrl.changePwd);
 
 //결제 관련 test -- 빌링키 받아오기
 router.post("/testest", async (req, res) => {

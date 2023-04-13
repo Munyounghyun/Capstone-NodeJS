@@ -9,11 +9,7 @@ class User {
   async login() {
     const body = this.body;
     try {
-      const response = await UsersModel.getUserInfo(
-        body.id,
-        body.pwd,
-        body.hand
-      );
+      const response = await UsersModel.getUserInfo(body.id, body.pwd);
       return response;
     } catch (err) {
       return err;
@@ -30,7 +26,17 @@ class User {
     }
   }
 
-  //생체정보 등록
+  //비밀번호 수정
+  async changePwd() {
+    try {
+      const response = await UsersModel.changePwdmd(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  //생체정보 등록여부
   async bioRegist() {
     try {
       const response = await UsersModel.bioRegistmd(this.body);
