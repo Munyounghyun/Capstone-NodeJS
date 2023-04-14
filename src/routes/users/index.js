@@ -1,4 +1,3 @@
-// const { getHashes } = require("crypto");
 var express = require("express");
 var router = express.Router();
 const usersCtrl = require("../../controller/users/usersCtrl");
@@ -19,6 +18,9 @@ router.post("/register", usersCtrl.signup);
 
 //비밀번호 수정
 router.put("/change-pwd", usersCtrl.changePwd);
+
+//회원삭제
+router.delete("/delete", usersCtrl.deleteUser);
 
 //결제 관련 test -- 빌링키 받아오기
 router.post("/testest", async (req, res) => {

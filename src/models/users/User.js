@@ -36,6 +36,17 @@ class User {
     }
   }
 
+  //회원삭제
+  async deleteUser() {
+    const body = this.body;
+    try {
+      const response = await UsersModel.deleteUsermd(body.id, body.pwd);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
   //생체정보 등록여부
   async bioRegist() {
     try {

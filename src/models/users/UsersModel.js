@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const db = require("../../config/db");
 const crypto = require("crypto");
 const util = require("util");
 
@@ -86,6 +86,36 @@ class UsersModel {
           resolve({ success: true, message: "수정 성공" });
         }
       );
+    });
+  }
+
+  //회원삭제
+  static async deleteUsermd(id, pwd) {
+    console.log(id, pwd);
+    return new Promise((resolve, reject) => {
+      //아이디, 비밀번호를 입력받았을때
+      db.query("select * from test where id=?", [id], async (err, data) => {
+        if (err) reject({ success: false });
+        //해당 회원 없을경우 에러
+        else if (data.length === 0) {
+          reject({ success: false, message: "아이디 없음" });
+        } //아이디 있는경우 비밀번호 확인
+        else {
+          const checkPwd = await verifyPassword(pwd, data[0].salt, data[0].pwd);
+          if (checkPwd) {
+            db.query("delete from test where id=?", [id], async (err, data) => {
+              if (err) reject({ success: false });
+              if (data.length === 0) {
+                reject({ success: false, message: "해당 회원 존재하지 않음" });
+              } else {
+                resolve({ success: true, message: "회원 삭제 완료" });
+              }
+            });
+          } else {
+            reject({ success: false, message: "비밀번호 오류" });
+          }
+        }
+      });
     });
   }
 

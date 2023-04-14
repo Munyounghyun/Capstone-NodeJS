@@ -1,4 +1,4 @@
-const User = require("../../models/User");
+const User = require("../../models/users/User");
 
 const userspage = (req, res) => {
   res.send("유저페이지");
@@ -25,6 +25,13 @@ const changePwd = async (req, res) => {
   return res.json(response);
 };
 
+//회원 삭제
+const deleteUser = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.deleteUser();
+  return res.json(response);
+};
+
 //생체정보 등록여부
 const bioRegist = async (req, res) => {
   const user = new User(req.body);
@@ -46,4 +53,5 @@ module.exports = {
   changePwd,
   bioRegist,
   payregistCtrl,
+  deleteUser,
 };
