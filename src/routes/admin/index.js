@@ -6,6 +6,8 @@ var router = express.Router();
 router.get("/", adminCtrl.adminControl);
 
 //관리자 로그인
-router.get("/login", adminCtrl.loginCtrl);
+router.post("/login", adminCtrl.loginCtrl);
+//관리자 회원가입
+router.post("/sign-up", adminCtrl.registerCtrl);
 
 module.exports = router;

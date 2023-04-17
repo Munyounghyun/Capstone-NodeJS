@@ -44,7 +44,7 @@ class AdminModel {
         else {
           const checkPwd = await verifyPassword(pwd, data[0].salt, data[0].pwd);
           if (checkPwd) {
-            resolve(data[0], { success: true });
+            resolve({ id: data[0].id, auth: data[0].authority, success: true });
           } else {
             reject({ success: false, message: "비밀번호 오류" });
           }
@@ -53,7 +53,7 @@ class AdminModel {
     });
   }
 
-  // 회원가입
+  // 회원가입 - 관리자 회원가입이므로 총책임자의 승인이 필요함 그래서 authority를 대기로 저장
   static async save(userInfo) {
     const { hashedPassword, salt } = await createHashedPassword(userInfo.pwd);
     return new Promise((resolve, reject) => {
@@ -65,10 +65,13 @@ class AdminModel {
           salt,
           userInfo.name,
           userInfo.credit_number,
-          "관리자",
+          "대기",
         ],
         (err) => {
-          if (err) reject({ success: false, message: "해당 아이디 존재함" });
+          if (err) {
+            reject({ success: false, message: "해당 아이디 존재함" });
+            console.log(err);
+          }
           resolve({ success: true });
         }
       );

@@ -44,7 +44,7 @@ class UsersModel {
         else {
           const checkPwd = await verifyPassword(pwd, data[0].salt, data[0].pwd);
           if (checkPwd) {
-            resolve(data[0], { success: true });
+            resolve({ id: data[0].id, success: true });
           } else {
             reject({ success: false, message: "비밀번호 오류" });
           }
