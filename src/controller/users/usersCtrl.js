@@ -40,9 +40,9 @@ const bioRegist = async (req, res) => {
 };
 
 //카드 등록
-const payregistCtrl = async (req, res, next) => {
+const cardRegist = async (req, res) => {
   const user = new User(req.body);
-  const response = await user.payregist();
+  const response = await user.cardRegist();
   return res.json(response);
 };
 
@@ -52,6 +52,6 @@ module.exports = {
   signup,
   changePwd,
   bioRegist,
-  payregistCtrl,
+  cardRegist,
   deleteUser,
 };

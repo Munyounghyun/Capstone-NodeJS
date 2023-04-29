@@ -58,9 +58,9 @@ class User {
   }
 
   //카드 등록
-  async payregist() {
+  async cardRegist() {
     try {
-      const response = await UsersModel.payregistmode(this.body);
+      const response = await UsersModel.cardRegistmd(this.body);
       return response;
     } catch (err) {
       return err;

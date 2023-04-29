@@ -44,7 +44,7 @@ class UsersModel {
         else {
           const checkPwd = await verifyPassword(pwd, data[0].salt, data[0].pwd);
           if (checkPwd) {
-            resolve({ id: data[0].id, success: true });
+            resolve({ success: true, message: "로그인 성공" });
           } else {
             reject({ success: false, message: "비밀번호 오류" });
           }
@@ -58,17 +58,11 @@ class UsersModel {
     const { hashedPassword, salt } = await createHashedPassword(userInfo.pwd);
     return new Promise((resolve, reject) => {
       db.query(
-        "insert into test(id,pwd,salt,name,credit_number) values(?,?,?,?,?);",
-        [
-          userInfo.id,
-          hashedPassword,
-          salt,
-          userInfo.name,
-          userInfo.credit_number,
-        ],
+        "insert into test(id,pwd,salt,name,phone) values(?,?,?,?,?);",
+        [userInfo.id, hashedPassword, salt, userInfo.name, userInfo.phone],
         (err) => {
           if (err) reject({ success: false, message: "해당 아이디 존재함" });
-          resolve({ success: true });
+          resolve({ success: true, message: "회원가입 성공" });
         }
       );
     });
@@ -91,7 +85,6 @@ class UsersModel {
 
   //회원삭제
   static async deleteUsermd(id, pwd) {
-    console.log(id, pwd);
     return new Promise((resolve, reject) => {
       //아이디, 비밀번호를 입력받았을때
       db.query("select * from test where id=?", [id], async (err, data) => {
@@ -134,8 +127,15 @@ class UsersModel {
     });
   }
 
-  //추후 작성 - 카드 등록
-  static payregistmd(cardInfo) {}
+  //추후 작성 - 카드 등록 수정 필요
+  static payregistmd(cardInfo) {
+    return new Promise((resolve, reject) => {
+      db.query("update card set customer_uid=? where id=?;", [
+        cardInfo.cutomer_uid,
+        cardInfo.id,
+      ]);
+    });
+  }
 }
 
 module.exports = UsersModel;
