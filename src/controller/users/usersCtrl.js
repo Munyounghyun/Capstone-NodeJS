@@ -18,6 +18,13 @@ const signup = async (req, res) => {
   return res.json(response);
 };
 
+//아이디 찾기
+const findId = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.findId();
+  return res.json(response);
+};
+
 //비밀번호 수정
 const changePwd = async (req, res) => {
   const user = new User(req.body);
@@ -46,12 +53,29 @@ const cardRegist = async (req, res) => {
   return res.json(response);
 };
 
+//결제
+const pay = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.pay();
+  return res.json(response);
+};
+
+//결제 내역
+const paylist = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.paylist();
+  return res.json(response);
+};
+
 module.exports = {
   userspage,
   login,
   signup,
+  findId,
   changePwd,
   bioRegist,
   cardRegist,
   deleteUser,
+  pay,
+  paylist,
 };

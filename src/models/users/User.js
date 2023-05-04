@@ -26,6 +26,16 @@ class User {
     }
   }
 
+  //아이디 찾기
+  async findId() {
+    try {
+      const response = await UsersModel.findIdmd(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
   //비밀번호 수정
   async changePwd() {
     try {
@@ -59,8 +69,35 @@ class User {
 
   //카드 등록
   async cardRegist() {
+    const body = this.body;
     try {
-      const response = await UsersModel.cardRegistmd(this.body);
+      const response = await UsersModel.cardRegistmd(
+        body.card_number,
+        body.expiry,
+        body.birth,
+        body.pwd_2digit,
+        body.id
+      );
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  //결제
+  async pay() {
+    try {
+      const response = await UsersModel.paymd(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  //결제 내역
+  async paylist() {
+    try {
+      const response = await UsersModel.payListmd(this.body);
       return response;
     } catch (err) {
       return err;
