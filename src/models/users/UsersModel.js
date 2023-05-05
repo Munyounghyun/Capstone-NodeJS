@@ -3,7 +3,7 @@ const db = require("../../config/db");
 const crypto = require("crypto");
 const { resolve } = require("path");
 const util = require("util");
-const { captureRejectionSymbol } = require("stream");
+const nodemailer = require("nodemailer");
 
 const randomBytesPromise = util.promisify(crypto.randomBytes);
 const pbkdf2Promise = util.promisify(crypto.pbkdf2);
@@ -47,9 +47,13 @@ class UsersModel {
         else {
           const checkPwd = await verifyPassword(pwd, data[0].salt, data[0].pwd);
           if (checkPwd) {
-            resolve({ success: true, message: "로그인 성공" });
+            resolve({
+              success: true,
+              message: "로그인 성공",
+              name: data[0].name,
+            });
           } else {
-            reject({ success: false, message: "비밀번호 오류" });
+            reject({ success: false, message: "비밀번호 오류", name: "" });
           }
         }
       });
@@ -66,6 +70,94 @@ class UsersModel {
         (err) => {
           if (err) reject({ success: false, message: "해당 아이디 존재함" });
           resolve({ success: true, message: "회원가입 성공" });
+        }
+      );
+    });
+  }
+
+  //이메일 보내기
+  static async auth(userInfo) {
+    return new Promise((resolve, reject) => {
+      const email = userInfo.email;
+      //6자리 난수
+      const authNumber = Math.floor(Math.random() * 888888) + 111111;
+      //보낼 gmail 세팅
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.GMAIL_ID,
+          pass: process.env.GMAIL_PWD,
+        },
+      });
+      //보낼 내용 세팅
+      const message = {
+        from: process.env.GMAIL_ID,
+        to: email,
+        subject: "HiFive 이메일 인증코드",
+        html: "<p>HiFive 이메일 인증코드 : <h1>" + authNumber + "</h1></p>",
+      };
+
+      transporter.sendMail(message, (err) => {
+        if (err) {
+          console.log(err);
+          reject({ success: false, message: "이메일 전송 실패" });
+        } else {
+          db.query(
+            "insert into email values(?,?);",
+            [email, authNumber],
+            (err) => {
+              if (err) {
+                reject({ success: false, message: "인증 정보 저장 실패" });
+              } else {
+                setTimeout(() => {
+                  db.query(
+                    "delete from email where email=? and auth_number=?",
+                    [email, authNumber],
+                    (err) => {
+                      if (err) {
+                        reject({ success: false, message: "이메일 삭제 실패" });
+                      }
+                    }
+                  );
+                }, 18000);
+                resolve({
+                  success: true,
+                  message: "이메일 전송 성공 - 3분 뒤 삭제",
+                });
+              }
+            }
+          );
+        }
+      });
+    });
+  }
+
+  //이메일 인증 체크
+  static async authCheck(userInfo) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        "select * from email where auth_number=?;",
+        [userInfo.auth_number],
+        (err, data) => {
+          if (err) {
+            reject({ success: false, message: "이메일 인증 실패" });
+          } else {
+            if (data.length !== 0) {
+              db.query(
+                "delete from email where auth_number=?;",
+                [userInfo.auth_number],
+                (err) => {
+                  if (err) {
+                    reject({ success: false, message: err });
+                  } else {
+                    resolve({ success: true, message: "이메일 인증 성공" });
+                  }
+                }
+              );
+            } else {
+              reject({ success: false, message: "이메일 인증 실패" });
+            }
+          }
         }
       );
     });
@@ -105,7 +197,7 @@ class UsersModel {
     return new Promise((resolve, reject) => {
       //아이디, 비밀번호를 입력받았을때
       db.query("select * from user where id=?", [id], async (err, data) => {
-        if (err) reject({ success: false });
+        if (err) reject({ success: false, message: err });
         //해당 회원 없을경우 에러
         else if (data.length === 0) {
           reject({ success: false, message: "아이디 없음" });
@@ -114,7 +206,7 @@ class UsersModel {
           const checkPwd = await verifyPassword(pwd, data[0].salt, data[0].pwd);
           if (checkPwd) {
             db.query("delete from user where id=?", [id], async (err, data) => {
-              if (err) reject({ success: false });
+              if (err) reject({ success: false, message: err });
               if (data.length === 0) {
                 reject({ success: false, message: "해당 회원 존재하지 않음" });
               } else {
@@ -291,19 +383,19 @@ class UsersModel {
     });
   }
 
+  //결제 내역
   static payListmd(userInfo) {
     return new Promise((resolve, reject) => {
       db.query(
-        "select date,fee from paylist where id=?",
-        [userInfo.id],
+        "select date,fee from paylist where id=? and year(date)=? and month(date)=?",
+        [userInfo.id, userInfo.year, userInfo.month],
         async (err, data) => {
           if (err) {
-            captureRejectionSymbol({
+            reject({
               success: false,
               message: "해당 아이디 없음",
             });
           } else {
-            console.log(data);
             resolve({ success: true, data });
           }
         }

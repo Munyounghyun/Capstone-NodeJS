@@ -11,6 +11,12 @@ router.put("/bio-regist", usersCtrl.bioRegist);
 //회원가입
 router.post("/register", usersCtrl.signup);
 
+//이메일 보내기
+router.post("/auth", usersCtrl.auth);
+
+//이메일 인증 확인
+router.post("/auth-check", usersCtrl.auth_check);
+
 //아이디 찾기
 router.get("/find-id", usersCtrl.findId);
 

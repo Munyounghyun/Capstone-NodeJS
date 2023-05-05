@@ -26,6 +26,26 @@ class User {
     }
   }
 
+  //이메일 보내기
+  async auth() {
+    try {
+      const response = await UsersModel.auth(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  //이메일 인증
+  async authCheck() {
+    try {
+      const response = await UsersModel.authCheck(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
   //아이디 찾기
   async findId() {
     try {

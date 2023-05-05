@@ -18,6 +18,20 @@ const signup = async (req, res) => {
   return res.json(response);
 };
 
+//이메일 보내기
+const auth = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.auth();
+  return res.json(response);
+};
+
+//이메일 인증
+const auth_check = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.authCheck();
+  return res.json(response);
+};
+
 //아이디 찾기
 const findId = async (req, res) => {
   const user = new User(req.body);
@@ -71,6 +85,8 @@ module.exports = {
   userspage,
   login,
   signup,
+  auth,
+  auth_check,
   findId,
   changePwd,
   bioRegist,
