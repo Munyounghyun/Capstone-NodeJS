@@ -76,7 +76,7 @@ const pay = async (req, res) => {
 
 //결제 내역
 const paylist = async (req, res) => {
-  const user = new User(req.body);
+  const user = new User(req.query);
   const response = await user.paylist();
   return res.json(response);
 };

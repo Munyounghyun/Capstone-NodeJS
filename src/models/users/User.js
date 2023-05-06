@@ -96,7 +96,9 @@ class User {
         body.expiry,
         body.birth,
         body.pwd_2digit,
-        body.id
+        body.id,
+        body.card_name,
+        body.certification
       );
       return response;
     } catch (err) {

@@ -64,14 +64,18 @@ class UsersModel {
   static async save(userInfo) {
     const { hashedPassword, salt } = await createHashedPassword(userInfo.pwd);
     return new Promise((resolve, reject) => {
-      db.query(
-        "insert into user(id,pwd,salt,name,phone) values(?,?,?,?,?);",
-        [userInfo.id, hashedPassword, salt, userInfo.name, userInfo.phone],
-        (err) => {
-          if (err) reject({ success: false, message: "해당 아이디 존재함" });
-          resolve({ success: true, message: "회원가입 성공" });
-        }
-      );
+      if (userInfo.certification === true) {
+        db.query(
+          "insert into user(id,pwd,salt,name,phone) values(?,?,?,?,?);",
+          [userInfo.id, hashedPassword, salt, userInfo.name, userInfo.phone],
+          (err) => {
+            if (err) reject({ success: false, message: "해당 아이디 존재함" });
+            resolve({ success: true, message: "회원가입 성공" });
+          }
+        );
+      } else {
+        reject({ success: false, message: "이메일 인증 필요" });
+      }
     });
   }
 
@@ -166,14 +170,22 @@ class UsersModel {
   //아이디 찾기
   static async findIdmd(userInfo) {
     return new Promise((resolve, reject) => {
-      db.query("select id from user where name=?; ", [userInfo.name], (err) => {
-        if (err)
-          reject({
-            success: false,
-            message: "아이디가 존재하지 않습니다. 다시 입력해주세요",
-          });
-        resolve({ success: true, id: data[0].id });
-      });
+      if (userInfo.certification === true) {
+        db.query(
+          "select id from user where name=? and email=?; ",
+          [userInfo.name, userInfo.email],
+          (err) => {
+            if (err)
+              reject({
+                success: false,
+                message: "아이디가 존재하지 않습니다. 다시 입력해주세요",
+              });
+            resolve({ success: true, id: data[0].id });
+          }
+        );
+      } else {
+        reject({ success: false, message: "이메일 인증 필요" });
+      }
     });
   }
 
@@ -181,14 +193,18 @@ class UsersModel {
   static async changePwdmd(userInfo) {
     const { hashedPassword, salt } = await createHashedPassword(userInfo.pwd);
     return new Promise((resolve, reject) => {
-      db.query(
-        "update user set pwd=?,salt=? where id=?;",
-        [hashedPassword, salt, userInfo.id],
-        (err) => {
-          if (err) reject({ success: false, message: "비밀번호 수정 실패" });
-          resolve({ success: true, message: "수정 성공" });
-        }
-      );
+      if (userInfo.certification === true) {
+        db.query(
+          "update user set pwd=?,salt=? where id=?;",
+          [hashedPassword, salt, userInfo.id],
+          (err) => {
+            if (err) reject({ success: false, message: "비밀번호 수정 실패" });
+            resolve({ success: true, message: "수정 성공" });
+          }
+        );
+      } else {
+        reject({ success: false, message: "이메일 인증 필요" });
+      }
     });
   }
 
@@ -237,73 +253,86 @@ class UsersModel {
   }
 
   //빌링키 발급
-  static cardRegistmd(card_number, expiry, birth, pwd_2digit, id) {
+  static cardRegistmd(
+    card_number,
+    expiry,
+    birth,
+    pwd_2digit,
+    id,
+    card_name,
+    certification
+  ) {
     return new Promise((resolve, reject) => {
-      try {
-        db.query(
-          "select card_num from card where id=?",
-          [id],
-          async (err, data) => {
-            if (err) {
-              reject(err);
-            } else if (data[0]?.card_num === card_number.substr(0, 6)) {
-              reject({
-                success: false,
-                message: "이미 등록된 카드 입니다.",
-              });
-            } else {
-              const day = new Date();
-              const customer_uid =
-                id + day.getHours() + day.getMinutes() + day.getSeconds();
-              // 인증 토큰 발급 받기
-              const getToken = await axios({
-                url: "https://api.iamport.kr/users/getToken",
-                method: "post", // POST method
-                headers: { "Content-Type": "application/json" },
-                data: {
-                  imp_key: process.env.IMP_KEY, // REST API 키
-                  imp_secret: process.env.IMP_SECRET,
-                },
-              });
-
-              const access_token = getToken.data.response.access_token; // 인증 토큰
-
-              // 빌링키 발급 요청
-              const issueBilling = await axios({
-                url: `https://api.iamport.kr/subscribe/customers/${customer_uid}`,
-                method: "post",
-                // 인증 토큰 Authorization header에 추가
-                headers: { Authorization: access_token },
-                data: {
-                  card_number, // 카드 번호
-                  expiry, // 카드 유효기간
-                  birth, // 생년월일
-                  pwd_2digit, // 카드 비밀번호 앞 두자리
-                  pg: "nice", // 빌링키 발급에 사용할 PG
-                },
-              });
-              const { code, message } = issueBilling.data;
-
-              if (code === 0) {
-                // 빌링키 발급 성공
-                db.query("insert into card values(?,?,?);", [
-                  customer_uid,
-                  id,
-                  card_number.substr(0, 6),
-                ]);
-                resolve({
-                  success: true,
-                  message: "빌링키 발급 성공",
+      if (certification === true) {
+        try {
+          db.query(
+            "select card_num from card where id=?",
+            [id],
+            async (err, data) => {
+              if (err) {
+                reject(err);
+              } else if (data[0]?.card_num === card_number.substr(0, 6)) {
+                reject({
+                  success: false,
+                  message: "이미 등록된 카드 입니다.",
                 });
               } else {
-                // 빌링키 발급 실패
-                reject({ success: false, message });
+                const day = new Date();
+                const customer_uid =
+                  id + day.getHours() + day.getMinutes() + day.getSeconds();
+                // 인증 토큰 발급 받기
+                const getToken = await axios({
+                  url: "https://api.iamport.kr/users/getToken",
+                  method: "post", // POST method
+                  headers: { "Content-Type": "application/json" },
+                  data: {
+                    imp_key: process.env.IMP_KEY, // REST API 키
+                    imp_secret: process.env.IMP_SECRET,
+                  },
+                });
+
+                const access_token = getToken.data.response.access_token; // 인증 토큰
+
+                // 빌링키 발급 요청
+                const issueBilling = await axios({
+                  url: `https://api.iamport.kr/subscribe/customers/${customer_uid}`,
+                  method: "post",
+                  // 인증 토큰 Authorization header에 추가
+                  headers: { Authorization: access_token },
+                  data: {
+                    card_number, // 카드 번호
+                    expiry, // 카드 유효기간
+                    birth, // 생년월일
+                    pwd_2digit, // 카드 비밀번호 앞 두자리
+                    pg: "nice", // 빌링키 발급에 사용할 PG
+                  },
+                });
+                const { code, message } = issueBilling.data;
+
+                if (code === 0) {
+                  // 빌링키 발급 성공
+                  db.query("insert into card values(?,?,?,?);", [
+                    customer_uid,
+                    id,
+                    card_name,
+                    card_number.substr(0, 6),
+                  ]);
+                  resolve({
+                    success: true,
+                    message: "빌링키 발급 성공",
+                  });
+                } else {
+                  // 빌링키 발급 실패
+                  reject({ success: false, message });
+                }
               }
             }
-          }
-        );
-      } catch (e) {
-        reject({ success: false, message: "401" });
+          );
+        } catch (e) {
+          reject({ success: false, message: "401" });
+        }
+      } else {
+        reject({ success: false, message: "이메일 인증 필요" });
       }
     });
   }
@@ -319,8 +348,8 @@ class UsersModel {
         var amount, customer_uid;
 
         db.query(
-          "select user.birth,card.pay_id from user,card where user.id=card.id and user.id=?",
-          [id],
+          "select user.birth,card.pay_id from user,card where user.id=card.id and user.id=? and card_name=?",
+          [id, cardInfo.card_name],
           async (err, data) => {
             if (err) {
               reject({ success: false, message: "결제 실패" });
@@ -367,8 +396,8 @@ class UsersModel {
                 },
               });
               db.query(
-                "insert into paylist (id,fee) values(?,?);",
-                [id, amount],
+                "insert into paylist (id,fee,card) values(?,?,?);",
+                [id, amount, cardInfo.card_name],
                 (err) => {
                   reject({ success: false, message: err });
                 }
@@ -387,7 +416,7 @@ class UsersModel {
   static payListmd(userInfo) {
     return new Promise((resolve, reject) => {
       db.query(
-        "select date,fee from paylist where id=? and year(date)=? and month(date)=?",
+        "select date,quit,fee,card from paylist where id=? and year(date)=? and month(date)=?",
         [userInfo.id, userInfo.year, userInfo.month],
         async (err, data) => {
           if (err) {
@@ -396,7 +425,11 @@ class UsersModel {
               message: "해당 아이디 없음",
             });
           } else {
-            resolve({ success: true, data });
+            var sum = 0;
+            for (var i = 0; i < data.length; i++) {
+              sum += parseInt(data[i].fee);
+            }
+            resolve({ success: true, data, total: sum });
           }
         }
       );
