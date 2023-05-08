@@ -140,16 +140,16 @@ class UsersModel {
   static async authCheck(userInfo) {
     return new Promise((resolve, reject) => {
       db.query(
-        "select * from email where auth_number=?;",
-        [userInfo.auth_number],
+        "select * from email where auth_number=? and email=?;",
+        [userInfo.auth_number, userInfo.email],
         (err, data) => {
           if (err) {
             reject({ success: false, message: "이메일 인증 실패" });
           } else {
             if (data.length !== 0) {
               db.query(
-                "delete from email where auth_number=?;",
-                [userInfo.auth_number],
+                "delete from email where auth_number=? and email=?;",
+                [userInfo.auth_number, userInfo.email],
                 (err) => {
                   if (err) {
                     reject({ success: false, message: err });
