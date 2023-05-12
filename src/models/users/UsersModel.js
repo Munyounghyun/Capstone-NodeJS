@@ -311,16 +311,27 @@ class UsersModel {
 
                 if (code === 0) {
                   // 빌링키 발급 성공
-                  db.query("insert into card values(?,?,?,?);", [
-                    customer_uid,
-                    id,
-                    card_name,
-                    card_number.substr(0, 6),
-                  ]);
-                  resolve({
-                    success: true,
-                    message: "빌링키 발급 성공",
-                  });
+                  if (data.length === 0) {
+                    //처음 카드 등록시 결제 카드로 등록
+                    db.query(
+                      "insert into card (pay_id,id,card_name,card_num,pay_card) values(?,?,?,?,?);",
+                      [customer_uid, id, card_name, card_number.substr(0, 6), 1]
+                    );
+                    resolve({
+                      success: true,
+                      message: "빌링키 발급 성공",
+                    });
+                  } else {
+                    //다른 카드 등록시 결제 카드로 등록X
+                    db.query(
+                      "insert into card (pay_id,id,card_name,card_num,pay_card) values(?,?,?,?,?);",
+                      [customer_uid, id, card_name, card_number.substr(0, 6), 0]
+                    );
+                    resolve({
+                      success: true,
+                      message: "빌링키 발급 성공",
+                    });
+                  }
                 } else {
                   // 빌링키 발급 실패
                   reject({ success: false, message });
@@ -348,8 +359,8 @@ class UsersModel {
         var amount, customer_uid;
 
         db.query(
-          "select user.birth,card.pay_id from user,card where user.id=card.id and user.id=? and card_name=?",
-          [id, cardInfo.card_name],
+          "select user.birth,card.pay_id,card.card_name ,card.pay_card from user,card where user.id=card.id and user.id=? and card.pay_card=1 ",
+          [id],
           async (err, data) => {
             if (err) {
               reject({ success: false, message: "결제 실패" });
@@ -382,7 +393,7 @@ class UsersModel {
 
               const access_token = getToken.data.response.access_token; // 인증 토큰
 
-              const paytest = await axios({
+              const req_pay = await axios({
                 url: "https://api.iamport.kr/subscribe/payments/again",
                 method: "post",
                 headers: {
@@ -397,7 +408,7 @@ class UsersModel {
               });
               db.query(
                 "insert into paylist (id,fee,card) values(?,?,?);",
-                [id, amount, cardInfo.card_name],
+                [id, amount, data[0].card_name],
                 (err) => {
                   reject({ success: false, message: err });
                 }
@@ -430,6 +441,41 @@ class UsersModel {
               sum += parseInt(data[i].fee);
             }
             resolve({ success: true, data, total: sum });
+          }
+        }
+      );
+    });
+  }
+
+  //결제 카드 변경
+  static changeCardmd(cardInfo) {
+    return new Promise((resolve, reject) => {
+      db.query(
+        "update card set pay_card=0 where id=?",
+        [cardInfo.id],
+        async (err) => {
+          if (err) {
+            reject({ success: false, message: "db 오류" });
+          } else {
+            db.query(
+              "update card set pay_card=1 where id=? and card_name=?",
+              [cardInfo.id, cardInfo.card_name],
+              async (err, data) => {
+                if (err) {
+                  reject({ success: false, message: "오류" });
+                } else if (data.length === 0) {
+                  reject({
+                    success: false,
+                    message: "해당 카드 존재하지 않음",
+                  });
+                } else {
+                  resolve({
+                    success: true,
+                    message: "결제 카드 변경 성공",
+                  });
+                }
+              }
+            );
           }
         }
       );

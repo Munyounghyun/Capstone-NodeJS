@@ -125,6 +125,16 @@ class User {
       return err;
     }
   }
+
+  //결제 카드 변경
+  async changeCard() {
+    try {
+      const response = await UsersModel.changeCardmd(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
 }
 
 module.exports = User;

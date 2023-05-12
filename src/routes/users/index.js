@@ -35,6 +35,9 @@ router.post("/pay", usersCtrl.pay);
 //결제 내역 확인
 router.get("/pay-list", usersCtrl.paylist);
 
+//결제 카드 변경
+router.put("/change-card", usersCtrl.changeCard);
+
 //정맥 등록
 router.post("/vein-regist", (req, res) => {});
 

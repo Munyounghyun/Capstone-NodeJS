@@ -81,6 +81,13 @@ const paylist = async (req, res) => {
   return res.json(response);
 };
 
+//결제 카드 변경
+const changeCard = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.changeCard();
+  return res.json(response);
+};
+
 module.exports = {
   userspage,
   login,
@@ -93,5 +100,6 @@ module.exports = {
   cardRegist,
   deleteUser,
   pay,
+  changeCard,
   paylist,
 };
