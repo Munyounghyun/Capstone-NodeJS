@@ -66,10 +66,17 @@ class UsersModel {
     return new Promise((resolve, reject) => {
       if (userInfo.certification === true) {
         db.query(
-          "insert into user(id,pwd,salt,name,phone) values(?,?,?,?,?);",
-          [userInfo.id, hashedPassword, salt, userInfo.name, userInfo.phone],
+          "insert into user(id,pwd,salt,name,email,birth) values(?,?,?,?,?,?);",
+          [
+            userInfo.id,
+            hashedPassword,
+            salt,
+            userInfo.name,
+            userInfo.email,
+            userInfo.birth,
+          ],
           (err) => {
-            if (err) reject({ success: false, message: "해당 아이디 존재함" });
+            if (err) reject({ success: false, message: "회원가입 실패" });
             resolve({ success: true, message: "회원가입 성공" });
           }
         );
