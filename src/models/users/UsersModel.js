@@ -407,13 +407,16 @@ class UsersModel {
                 },
               });
               db.query(
-                "insert into paylist (id,fee,card) values(?,?,?);",
+                "insert into paylist (id,fee,card_name) values(?,?,?);",
                 [id, amount, data[0].card_name],
-                (err) => {
-                  reject({ success: false, message: err });
+                async (err) => {
+                  if (err) {
+                    reject({ success: false, message: err });
+                  } else {
+                    resolve({ success: true, message: amount + "원 결제" });
+                  }
                 }
               );
-              resolve({ success: true, message: amount + "원 결제" });
             }
           }
         );
@@ -427,7 +430,7 @@ class UsersModel {
   static payListmd(userInfo) {
     return new Promise((resolve, reject) => {
       db.query(
-        "select date,quit,fee,card from paylist where id=? and year(date)=? and month(date)=?",
+        "select date,quit,fee,card_name from paylist where id=? and year(date)=? and month(date)=?",
         [userInfo.id, userInfo.year, userInfo.month],
         async (err, data) => {
           if (err) {
