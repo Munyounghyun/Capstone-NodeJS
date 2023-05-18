@@ -88,6 +88,13 @@ const changeCard = async (req, res) => {
   return res.json(response);
 };
 
+//정맥 등록
+const registVein = async (req, res) => {
+  const user = new User(req.body);
+  const response = await user.registVein();
+  return res.json(response);
+};
+
 module.exports = {
   userspage,
   login,
@@ -102,4 +109,5 @@ module.exports = {
   pay,
   changeCard,
   paylist,
+  registVein,
 };

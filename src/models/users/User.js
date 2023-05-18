@@ -135,6 +135,16 @@ class User {
       return err;
     }
   }
+
+  //정맥 등록
+  async registVein() {
+    try {
+      const response = await UsersModel.registVeinmd(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
 }
 
 module.exports = User;

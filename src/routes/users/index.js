@@ -39,6 +39,6 @@ router.get("/pay-list", usersCtrl.paylist);
 router.put("/change-card", usersCtrl.changeCard);
 
 //정맥 등록
-router.post("/vein-regist", (req, res) => {});
+router.put("/vein-regist", usersCtrl.registVein);
 
 module.exports = router;
