@@ -37,6 +37,7 @@ const verifyPassword = async (password, userSalt, userPassword) => {
 const captureAndReceivePhoto = () => {
   return new Promise((resolve, reject) => {
     const port = new SerialPort("/dev/tty-usbserial1", {
+      //이거 잘 모름
       baudRate: 57600,
     });
 
@@ -62,7 +63,7 @@ class UsersModel {
     return new Promise((resolve, reject) => {
       //아이디, 비밀번호를 입력받았을때
       db.query("select * from user where id=?;", [id], async (err, data) => {
-        if (err) reject({ success: false });
+        if (err) reject({ success: false, message: "DB 오류" });
         //아이디가 없을경우 에러
         if (data.length === 0) {
           reject({ success: false, message: "아이디 없음" });
@@ -200,11 +201,12 @@ class UsersModel {
   //아이디 찾기
   static async findIdmd(userInfo) {
     return new Promise((resolve, reject) => {
-      if (userInfo.certification === true) {
+      console.log(userInfo);
+      if (userInfo.certification === "true") {
         db.query(
           "select id from user where name=? and email=?; ",
-          [userInfo.name, userInfo.email],
-          (err) => {
+          [decodeURIComponent(userInfo.name), userInfo.email],
+          (err, data) => {
             if (err)
               reject({
                 success: false,
@@ -378,7 +380,7 @@ class UsersModel {
     });
   }
 
-  //결제
+  //결제 (수정 필요)
   static paymd(cardInfo) {
     return new Promise((resolve, reject) => {
       try {
@@ -515,22 +517,48 @@ class UsersModel {
     });
   }
 
+  //카드 불러오기
+  static cardListmd(userInfo) {
+    return new Promise(async (resolve, reject) => {
+      db.query(
+        "select card_name,card_num,pay_card from card where id=?",
+        [userInfo.id],
+        (err, data) => {
+          if (err) {
+            reject({ success: false, message: err });
+          } else {
+            resolve({ success: true, card: data });
+          }
+        }
+      );
+    });
+  }
+
+  //정맥 등록
   static registVeinmd(userInfo) {
     return new Promise(async (resolve, reject) => {
       try {
         const photoData = await captureAndReceivePhoto(); //함수 수정해야함
         //작업 내용들...
-        db.query(
-          "update user set vein=? where id=?",
-          [photoData, userInfo.id], //photoData 어떻게 받아오는지 테스트 해봐야함
-          (err) => {
-            if (err) {
-              reject({ success: false, message: "정맥 등록 실패" });
+        db.query("select vein from user where vein=?", [photoData], (err) => {
+          if ((err, data)) {
+            reject({ success: false, message: "정맥 인식 실패" });
+          } else {
+            if (data[0].length === 0) {
+              //db에 해당 정맥 없음
+              db.query(
+                "update user set vein=? where =?id",
+                [photoData, userInfo.id],
+                (err) => {
+                  resolve({ success: true, message: "정맥 등록 성공" });
+                }
+              );
             } else {
-              resolve({ success: true, message: "정맥 등록 성공" });
+              //db에 해당 정맥 있음
+              reject({ success: false, message: "해당 정맥 존재" });
             }
           }
-        );
+        });
       } catch (err) {
         reject({ success: false, message: err });
       }

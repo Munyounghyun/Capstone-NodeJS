@@ -38,6 +38,9 @@ router.get("/pay-list", usersCtrl.paylist);
 //결제 카드 변경
 router.put("/change-card", usersCtrl.changeCard);
 
+//등록된 카드 불러오기
+router.get("/card-list", usersCtrl.cardList);
+
 //정맥 등록
 router.put("/vein-regist", usersCtrl.registVein);
 

@@ -34,7 +34,7 @@ const auth_check = async (req, res) => {
 
 //아이디 찾기
 const findId = async (req, res) => {
-  const user = new User(req.body);
+  const user = new User(req.query);
   const response = await user.findId();
   return res.json(response);
 };
@@ -88,6 +88,13 @@ const changeCard = async (req, res) => {
   return res.json(response);
 };
 
+//카드 불러오기
+const cardList = async (req, res) => {
+  const user = new User(req.query);
+  const response = await user.cardList();
+  return res.json(response);
+};
+
 //정맥 등록
 const registVein = async (req, res) => {
   const user = new User(req.body);
@@ -107,7 +114,8 @@ module.exports = {
   cardRegist,
   deleteUser,
   pay,
-  changeCard,
   paylist,
+  changeCard,
+  cardList,
   registVein,
 };

@@ -136,6 +136,16 @@ class User {
     }
   }
 
+  //카드 불러오기
+  async cardList() {
+    try {
+      const response = await UsersModel.cardListmd(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
   //정맥 등록
   async registVein() {
     try {
