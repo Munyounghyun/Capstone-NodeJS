@@ -202,7 +202,7 @@ class UsersModel {
   static async findIdmd(userInfo) {
     return new Promise((resolve, reject) => {
       console.log(userInfo);
-      if (userInfo.certification === "true") {
+      if (Boolean(userInfo.certification) === true) {
         db.query(
           "select id from user where name=? and email=?; ",
           [decodeURIComponent(userInfo.name), userInfo.email],
