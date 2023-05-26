@@ -66,7 +66,12 @@ class UsersModel {
         if (err) reject({ success: false, message: "DB 오류" });
         //아이디가 없을경우 에러
         if (data.length === 0) {
-          reject({ success: false, message: "아이디 없음" });
+          reject({
+            success: false,
+            message: "아이디 없음",
+            name: "null",
+            email: "null",
+          });
         } //아이디 있는경우 비밀번호 확인
         else {
           const checkPwd = await verifyPassword(pwd, data[0].salt, data[0].pwd);
@@ -75,9 +80,15 @@ class UsersModel {
               success: true,
               message: "로그인 성공",
               name: data[0].name,
+              email: data[0].email,
             });
           } else {
-            reject({ success: false, message: "비밀번호 오류", name: "" });
+            reject({
+              success: false,
+              message: "비밀번호 오류",
+              name: "",
+              email: "",
+            });
           }
         }
       });
