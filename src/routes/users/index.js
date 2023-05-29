@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const usersCtrl = require("../../controller/users/usersCtrl");
+const cardCtrl = require("../../controller/card/cardCtrl");
 
 //로그인
 router.post("/login", usersCtrl.login);
@@ -26,22 +27,22 @@ router.put("/change-pwd", usersCtrl.changePwd);
 //회원삭제
 router.delete("/delete", usersCtrl.deleteUser);
 
-//결제 관련 test -- 빌링키 받아오기 수정필요
-router.post("/card-regist", usersCtrl.cardRegist);
-
-//결제
-router.post("/pay", usersCtrl.pay);
-
-//결제 내역 확인
-router.get("/pay-list", usersCtrl.paylist);
-
-//결제 카드 변경
-router.put("/change-card", usersCtrl.changeCard);
-
-//등록된 카드 불러오기
-router.get("/card-list", usersCtrl.cardList);
-
 //정맥 등록
 router.put("/vein-regist", usersCtrl.registVein);
+
+//결제 관련 -- 빌링키 발급
+router.post("/card-regist", cardCtrl.cardRegist);
+
+//결제
+router.post("/pay", cardCtrl.pay);
+
+//결제 내역 확인
+router.get("/pay-list", cardCtrl.paylist);
+
+//결제 카드 변경
+router.put("/change-card", cardCtrl.changeCard);
+
+//등록된 카드 불러오기
+router.get("/card-list", cardCtrl.cardList);
 
 module.exports = router;

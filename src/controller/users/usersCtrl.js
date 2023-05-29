@@ -60,41 +60,6 @@ const bioRegist = async (req, res) => {
   return res.json(response);
 };
 
-//카드 등록
-const cardRegist = async (req, res) => {
-  const user = new User(req.body);
-  const response = await user.cardRegist();
-  return res.json(response);
-};
-
-//결제
-const pay = async (req, res) => {
-  const user = new User(req.body);
-  const response = await user.pay();
-  return res.json(response);
-};
-
-//결제 내역
-const paylist = async (req, res) => {
-  const user = new User(req.query);
-  const response = await user.paylist();
-  return res.json(response);
-};
-
-//결제 카드 변경
-const changeCard = async (req, res) => {
-  const user = new User(req.body);
-  const response = await user.changeCard();
-  return res.json(response);
-};
-
-//카드 불러오기
-const cardList = async (req, res) => {
-  const user = new User(req.query);
-  const response = await user.cardList();
-  return res.json(response);
-};
-
 //정맥 등록
 const registVein = async (req, res) => {
   const user = new User(req.body);
@@ -111,11 +76,6 @@ module.exports = {
   findId,
   changePwd,
   bioRegist,
-  cardRegist,
   deleteUser,
-  pay,
-  paylist,
-  changeCard,
-  cardList,
   registVein,
 };
