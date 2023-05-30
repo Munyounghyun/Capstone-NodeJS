@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 const usersCtrl = require("../../controller/users/usersCtrl");
 const cardCtrl = require("../../controller/card/cardCtrl");
+const net = require("net");
+const db = require("../../config/db");
 
 //로그인
 router.post("/login", usersCtrl.login);
@@ -33,8 +35,24 @@ router.put("/vein-regist", usersCtrl.registVein);
 //결제 관련 -- 빌링키 발급
 router.post("/card-regist", cardCtrl.cardRegist);
 
-//결제
+//빌링키 삭제
+router.delete("/card-delete", cardCtrl.deleteCard);
+
+//결제 아래코드로 수정해야함
 router.post("/pay", cardCtrl.pay);
+
+//정맥 결제 (수정필요)
+// const server = net.createServer((socket) => {
+//   socket.on("data", (data) => {
+//     console.log(data + " 확인");
+//   });
+
+//   var post = { name: data.toString() }; //넘겨줄 데이터
+//   var query = db.query("결제 쿼리 작성");
+
+//   //결제 된 경우
+//   socket.write("보낼내용");
+// });
 
 //결제 내역 확인
 router.get("/pay-list", cardCtrl.paylist);

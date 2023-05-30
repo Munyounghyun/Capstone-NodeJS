@@ -24,6 +24,16 @@ class Card {
     }
   }
 
+  //카드 삭제
+  async deleteCard() {
+    try {
+      const response = await CardModel.deleteCardmd(this.body);
+      return response;
+    } catch (err) {
+      return err;
+    }
+  }
+
   //결제
   async pay() {
     try {

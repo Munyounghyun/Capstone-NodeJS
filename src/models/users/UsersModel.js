@@ -1,4 +1,3 @@
-const { default: axios } = require("axios");
 const db = require("../../config/db");
 const crypto = require("crypto");
 const util = require("util");
@@ -10,7 +9,6 @@ const pbkdf2Promise = util.promisify(crypto.pbkdf2);
 //비밀번호로 salt 생성함수
 const createSalt = async () => {
   const buf = await randomBytesPromise(64);
-
   return buf.toString("base64");
 };
 
@@ -32,7 +30,7 @@ const verifyPassword = async (password, userSalt, userPassword) => {
   return false;
 };
 
-//사진 받는 함수
+// //사진 받는 함수  --  *****수정필요(시리얼 통신)*****
 const captureAndReceivePhoto = () => {
   return new Promise((resolve, reject) => {
     const port = new SerialPort("/dev/tty-usbserial1", {
@@ -285,8 +283,8 @@ class UsersModel {
         "update user set bio_regist=?  bio_method=? where id=?;",
         [userInfo.bio_regist, userInfo.bio_method, userInfo.id],
         (err) => {
-          if (err) reject({ success: false });
-          resolve({ success: true }, "생체정보가 등록되었습니다."); //생체정보가 등록된 것이 아니라 방법(지문,얼굴)과,등록 여부만 업데이트
+          if (err) reject({ success: false, message: "생체정보 등록 실패" });
+          resolve({ success: true, message: "생체정보가 등록되었습니다." }); //생체정보가 등록된 것이 아니라 방법(지문,얼굴)과,등록 여부만 업데이트
         }
       );
     });
@@ -296,27 +294,34 @@ class UsersModel {
   static registVeinmd(userInfo) {
     return new Promise(async (resolve, reject) => {
       try {
-        const photoData = await captureAndReceivePhoto(); //함수 수정해야함
+        //const photoData = await captureAndReceivePhoto(); //함수 수정해야함
+
         //작업 내용들...
-        db.query("select vein from user where vein=?", [photoData], (err) => {
-          if ((err, data)) {
-            reject({ success: false, message: "정맥 인식 실패" });
-          } else {
-            if (data[0].length === 0) {
-              //db에 해당 정맥 없음
-              db.query(
-                "update user set vein=? where =?id",
-                [photoData, userInfo.id],
-                (err) => {
-                  resolve({ success: true, message: "정맥 등록 성공" });
-                }
-              );
+        db.query(
+          "select vein from user where vein=?",
+          [userInfo.vein],
+          (err) => {
+            if (err) {
+              reject({ success: false, message: "정맥 인식 실패" });
             } else {
-              //db에 해당 정맥 있음
-              reject({ success: false, message: "해당 정맥 존재" });
+              if (data[0].length === 0) {
+                //db에 해당 정맥 없음
+                db.query(
+                  "update user set vein=? where =?",
+                  [userInfo.vein, userInfo.id],
+                  (err) => {
+                    if (err)
+                      reject({ success: false, message: "정맥등록 실패" });
+                    resolve({ success: true, message: "정맥 등록 성공" });
+                  }
+                );
+              } else {
+                //db에 해당 정맥 있음
+                reject({ success: false, message: "해당 정맥 존재" });
+              }
             }
           }
-        });
+        );
       } catch (err) {
         reject({ success: false, message: err });
       }

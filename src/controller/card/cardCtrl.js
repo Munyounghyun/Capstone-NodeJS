@@ -2,8 +2,15 @@ const Card = require("../../models/card/Card");
 
 //카드 등록
 const cardRegist = async (req, res) => {
-  const card = new Card(this.body);
+  const card = new Card(req.body);
   const response = await card.cardRegist();
+  return res.json(response);
+};
+
+//카드 삭제
+const deleteCard = async (req, res) => {
+  const card = new Card(req.body);
+  const response = await card.deleteCard();
   return res.json(response);
 };
 
@@ -37,6 +44,7 @@ const cardList = async (req, res) => {
 
 module.exports = {
   cardRegist,
+  deleteCard,
   pay,
   paylist,
   changeCard,

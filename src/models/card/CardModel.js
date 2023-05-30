@@ -21,7 +21,10 @@ class CardModel {
             async (err, data) => {
               if (err) {
                 reject(err);
-              } else if (data[0]?.card_num === card_number.substr(0, 6)) {
+              } else if (
+                data[0]?.card_num ===
+                card_number.substr(0, 6) + "******" + card_number.substr(12)
+              ) {
                 reject({
                   success: false,
                   message: "이미 등록된 카드 입니다.",
@@ -75,7 +78,15 @@ class CardModel {
                     //다른 카드 등록시 결제 카드로 등록X
                     db.query(
                       "insert into card (pay_id,id,card_name,card_num,pay_card) values(?,?,?,?,?);",
-                      [customer_uid, id, card_name, card_number.substr(0, 6), 0]
+                      [
+                        customer_uid,
+                        id,
+                        card_name,
+                        card_number.substr(0, 6) +
+                          "******" +
+                          card_number.substr(12),
+                        0,
+                      ]
                     );
                     resolve({
                       success: true,
@@ -94,6 +105,68 @@ class CardModel {
         }
       } else {
         reject({ success: false, message: "이메일 인증 필요" });
+      }
+    });
+  }
+
+  //카드 삭제
+  static deleteCardmd(cardInfo) {
+    console.log(cardInfo);
+    return new Promise((resolve, reject) => {
+      try {
+        db.query(
+          "select pay_id from card where id=? and card_name=?",
+          [cardInfo.id, cardInfo.card_name],
+          async (err, data) => {
+            console.log(data);
+            if (err) {
+              reject({ success: false, message: "카드 삭제 실패" });
+            } else {
+              const customer_uid = data[0].pay_id;
+
+              // 인증 토큰 발급 받기
+              const getToken = await axios({
+                url: "https://api.iamport.kr/users/getToken",
+                method: "post", // POST method
+                headers: { "Content-Type": "application/json" },
+                data: {
+                  imp_key: process.env.IMP_KEY, // REST API 키
+                  imp_secret: process.env.IMP_SECRET,
+                },
+              });
+
+              const access_token = getToken.data.response.access_token; // 인증 토큰
+
+              // 빌링키 삭제 요청
+              const issueBilling = await axios({
+                url: `https://api.iamport.kr/subscribe/customers/${customer_uid}`,
+                // 인증 토큰 Authorization header에 추가
+                headers: { Authorization: access_token },
+                method: "delete",
+              });
+              const { code, message } = issueBilling.data;
+              if (code == 0) {
+                //카드 삭제 완료
+                db.query(
+                  "delete from card where pay_id=?",
+                  [customer_uid],
+                  (err) => {
+                    if (err) {
+                      reject({ success: true, message: "카드 삭제 실패" });
+                    } else {
+                      resolve({ success: false, message: "카드 삭제 성공" });
+                    }
+                  }
+                );
+              } else {
+                reject({ success: false, message: "에러여" });
+              }
+            }
+          }
+        );
+      } catch (err) {
+        reject({ success: false, message: "catch" });
+        console.log(err);
       }
     });
   }
@@ -211,8 +284,8 @@ class CardModel {
             reject({ success: false, message: "db 오류" });
           } else {
             db.query(
-              "update card set pay_card=1 where id=? and card_name=?",
-              [cardInfo.id, cardInfo.card_name],
+              "update card set pay_card=1 where id=? and card_num=?",
+              [cardInfo.id, cardInfo.card_num],
               async (err, data) => {
                 if (err) {
                   reject({ success: false, message: "오류" });
