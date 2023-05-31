@@ -15,7 +15,6 @@ class Card {
         body.birth,
         body.pwd_2digit,
         body.id,
-        body.card_name,
         body.certification
       );
       return response;

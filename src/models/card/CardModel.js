@@ -9,26 +9,19 @@ class CardModel {
     birth,
     pwd_2digit,
     id,
-    card_name,
     certification
   ) {
     return new Promise((resolve, reject) => {
       if (certification === true) {
         try {
           db.query(
-            "select card_num from card where id=?",
-            [id],
+            "select card_num from card where card_num=? and id=?",
+            [card_number.substr(0, 6) + "******" + card_number.substr(12), id],
             async (err, data) => {
               if (err) {
                 reject(err);
-              } else if (
-                data[0]?.card_num ===
-                card_number.substr(0, 6) + "******" + card_number.substr(12)
-              ) {
-                reject({
-                  success: false,
-                  message: "이미 등록된 카드 입니다.",
-                });
+              } else if (data.length !== 0) {
+                reject({ success: false, message: "이미 등록된 카드 입니다." });
               } else {
                 const day = new Date();
                 const customer_uid =
@@ -63,36 +56,65 @@ class CardModel {
                 const { code, message } = issueBilling.data;
 
                 if (code === 0) {
-                  // 빌링키 발급 성공
-                  if (data.length === 0) {
-                    //처음 카드 등록시 결제 카드로 등록
-                    db.query(
-                      "insert into card (pay_id,id,card_name,card_num,pay_card) values(?,?,?,?,?);",
-                      [customer_uid, id, card_name, card_number.substr(0, 6), 1]
-                    );
-                    resolve({
-                      success: true,
-                      message: "빌링키 발급 성공",
-                    });
-                  } else {
-                    //다른 카드 등록시 결제 카드로 등록X
-                    db.query(
-                      "insert into card (pay_id,id,card_name,card_num,pay_card) values(?,?,?,?,?);",
-                      [
-                        customer_uid,
-                        id,
-                        card_name,
-                        card_number.substr(0, 6) +
-                          "******" +
-                          card_number.substr(12),
-                        0,
-                      ]
-                    );
-                    resolve({
-                      success: true,
-                      message: "빌링키 발급 성공",
-                    });
-                  }
+                  db.query(
+                    "select card_name from cardlist where card_bin=?",
+                    [card_number.substr(0, 6)],
+                    (err, data) => {
+                      if (err) {
+                        reject({
+                          success: false,
+                          message: "DB에 등록되지 않은카드, KB카드는 등록 불가",
+                        });
+                      } else {
+                        var card_name = data[0].card_name;
+                        db.query(
+                          "select * from card where id=?",
+                          [id],
+                          (err, data) => {
+                            if (err) {
+                              reject({ success: false, message: "db오류" });
+                            } else if (data.length === 0) {
+                              //처음 카드 등록시 결제 카드로 등록
+                              db.query(
+                                "insert into card (pay_id,id,card_name,card_num,pay_card) values(?,?,?,?,?);",
+                                [
+                                  customer_uid,
+                                  id,
+                                  card_name,
+                                  card_number.substr(0, 6) +
+                                    "******" +
+                                    card_number.substr(12),
+                                  1,
+                                ]
+                              );
+                              resolve({
+                                success: true,
+                                message: "빌링키 발급 성공",
+                              });
+                            } else {
+                              //다른 카드 등록시 결제 카드로 등록X
+                              db.query(
+                                "insert into card (pay_id,id,card_name,card_num,pay_card) values(?,?,?,?,?);",
+                                [
+                                  customer_uid,
+                                  id,
+                                  card_name,
+                                  card_number.substr(0, 6) +
+                                    "******" +
+                                    card_number.substr(12),
+                                  0,
+                                ]
+                              );
+                              resolve({
+                                success: true,
+                                message: "빌링키 발급 성공",
+                              });
+                            }
+                          }
+                        );
+                      }
+                    }
+                  );
                 } else {
                   // 빌링키 발급 실패
                   reject({ success: false, message });
@@ -115,8 +137,8 @@ class CardModel {
     return new Promise((resolve, reject) => {
       try {
         db.query(
-          "select pay_id from card where id=? and card_name=?",
-          [cardInfo.id, cardInfo.card_name],
+          "select pay_id from card where id=? and card_num=?",
+          [cardInfo.id, cardInfo.card_num],
           async (err, data) => {
             console.log(data);
             if (err) {
@@ -159,13 +181,13 @@ class CardModel {
                   }
                 );
               } else {
-                reject({ success: false, message: "에러여" });
+                reject({ success: false, message });
               }
             }
           }
         );
       } catch (err) {
-        reject({ success: false, message: "catch" });
+        reject({ success: false, message: err });
         console.log(err);
       }
     });
@@ -312,7 +334,9 @@ class CardModel {
   static cardListmd(userInfo) {
     return new Promise(async (resolve, reject) => {
       db.query(
-        "select card_name,card_num,pay_card from card where id=?",
+        "select card.card_name,card.card_num,card.pay_card,cardlist.url " +
+          "from card,cardlist " +
+          "where card.card_name=cardlist.card_name and id=? AND cardlist.card_bin=SUBSTR(card.card_num,1,6);  ",
         [userInfo.id],
         (err, data) => {
           if (err) {
