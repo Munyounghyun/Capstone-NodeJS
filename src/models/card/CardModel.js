@@ -66,7 +66,12 @@ class CardModel {
                           message: "DB에 등록되지 않은카드, KB카드는 등록 불가",
                         });
                       } else {
-                        var card_name = data[0].card_name;
+                        var card_name;
+                        if (data[0]?.card_name !== undefined) {
+                          card_name = data[0].card_name;
+                        } else {
+                          card_name = "db에 등록되어 있지 않은 카드";
+                        }
                         db.query(
                           "select * from card where id=?",
                           [id],
