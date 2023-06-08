@@ -41,19 +41,6 @@ router.delete("/card-delete", cardCtrl.deleteCard);
 //결제 아래코드로 수정해야함
 router.post("/pay", cardCtrl.pay);
 
-//정맥 결제 (수정필요)
-// const server = net.createServer((socket) => {
-//   socket.on("data", (data) => {
-//     console.log(data + " 확인");
-//   });
-
-//   var post = { name: data.toString() }; //넘겨줄 데이터
-//   var query = db.query("결제 쿼리 작성");
-
-//   //결제 된 경우
-//   socket.write("보낼내용");
-// });
-
 //결제 내역 확인
 router.get("/pay-list", cardCtrl.paylist);
 

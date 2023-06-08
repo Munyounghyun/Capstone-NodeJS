@@ -14,12 +14,13 @@ class CardModel {
     return new Promise((resolve, reject) => {
       if (certification === true) {
         try {
+          //이미 동일한 카드가 등록되어있는지 검색
           db.query(
             "select card_num from card where card_num=? and id=?",
             [card_number.substr(0, 6) + "******" + card_number.substr(12), id],
             async (err, data) => {
               if (err) {
-                reject(err);
+                reject({ success: false, message: err });
               } else if (data.length !== 0) {
                 reject({ success: false, message: "이미 등록된 카드 입니다." });
               } else {
@@ -56,6 +57,7 @@ class CardModel {
                 const { code, message } = issueBilling.data;
 
                 if (code === 0) {
+                  //카드 이름 찾기
                   db.query(
                     "select card_name from cardlist where card_bin=?",
                     [card_number.substr(0, 6)],
@@ -72,6 +74,7 @@ class CardModel {
                         } else {
                           card_name = "db에 등록되어 있지 않은 카드";
                         }
+                        //등록된 카드가 있는지 검색
                         db.query(
                           "select * from card where id=?",
                           [id],
@@ -141,6 +144,7 @@ class CardModel {
     console.log(cardInfo);
     return new Promise((resolve, reject) => {
       try {
+        //아이디와 카드번호를 이용하여 빌링키 찾기
         db.query(
           "select pay_id from card where id=? and card_num=?",
           [cardInfo.id, cardInfo.card_num],
@@ -208,6 +212,7 @@ class CardModel {
         const name = "Hifive 결제";
         var amount, customer_uid;
 
+        //아이디를 이용하여 결제 카드 불러오기
         db.query(
           "select user.birth,card.pay_id,card.card_name ,card.pay_card from user,card where user.id=card.id and user.id=? and card.pay_card=1 ",
           [id],
@@ -215,17 +220,16 @@ class CardModel {
             if (err) {
               reject({ success: false, message: "결제 실패" });
             } else {
+              //어른
               if (day.getFullYear() - data[0]?.birth.substr(0, 4) >= 19) {
-                //어른
                 amount = 1200;
-              } else if (
-                day.getFullYear() - data[0]?.birth.substr(0, 4) >=
-                13
-              ) {
-                //청소년
+              }
+              //청소년
+              else if (day.getFullYear() - data[0]?.birth.substr(0, 4) >= 13) {
                 amount = 720;
-              } else if (day.getFullYear() - data[0]?.birth.substr(0, 4) >= 6) {
-                //어린이
+              }
+              //어린이
+              else if (day.getFullYear() - data[0]?.birth.substr(0, 4) >= 6) {
                 amount = 450;
               }
               customer_uid = data[0]?.pay_id;
@@ -256,6 +260,7 @@ class CardModel {
                   name, //결제명
                 },
               });
+              //결제 성공시 결제 내역에 추가
               db.query(
                 "insert into paylist (id,fee,card_name) values(?,?,?);",
                 [id, amount, data[0].card_name],
@@ -303,6 +308,7 @@ class CardModel {
   //결제 카드 변경
   static changeCardmd(cardInfo) {
     return new Promise((resolve, reject) => {
+      //먼저 등록된 카드 전부 결제 카드가 아니게 변경
       db.query(
         "update card set pay_card=0 where id=?",
         [cardInfo.id],
@@ -310,6 +316,7 @@ class CardModel {
           if (err) {
             reject({ success: false, message: "db 오류" });
           } else {
+            //선택한 카드를 결제카드로 변경
             db.query(
               "update card set pay_card=1 where id=? and card_num=?",
               [cardInfo.id, cardInfo.card_num],

@@ -30,30 +30,6 @@ const verifyPassword = async (password, userSalt, userPassword) => {
   return false;
 };
 
-// //사진 받는 함수  --  *****수정필요(시리얼 통신)*****
-const captureAndReceivePhoto = () => {
-  return new Promise((resolve, reject) => {
-    const port = new SerialPort("/dev/tty-usbserial1", {
-      //이거 잘 모름
-      baudRate: 57600,
-    });
-
-    // 사진 촬영 명령 전송
-    port.write("CAPTURE_PHOTO_COMMAND", (err) => {
-      if (err) {
-        return reject(err);
-      }
-    });
-
-    // 사진 데이터 전송받기
-    port.on("data", (data) => {
-      // 여기서 data는 전송받은 사진 데이터입니다.
-      // 실제 코드에서는 라즈베리파이와 통신하는 데 필요한 실제 명령과 이벤트를 사용해야 합니다.
-      resolve(data);
-    });
-  });
-};
-
 class UsersModel {
   //로그인
   static getUserInfo(id, pwd) {
@@ -122,6 +98,11 @@ class UsersModel {
   static async auth(userInfo) {
     return new Promise((resolve, reject) => {
       const email = userInfo.email;
+      db.query("delete from email where email=?", [email], (err) => {
+        if (err) {
+          reject({ success: false, message: err });
+        }
+      });
       //6자리 난수
       const authNumber = Math.floor(Math.random() * 888888) + 111111;
       //보낼 gmail 세팅
@@ -178,7 +159,7 @@ class UsersModel {
   static async authCheck(userInfo) {
     return new Promise((resolve, reject) => {
       db.query(
-        "select * from email where auth_number=? and email=?;",
+        "select * from email where auth_number=? and email=? ;",
         [userInfo.auth_number, userInfo.email],
         (err, data) => {
           if (err) {
