@@ -346,13 +346,11 @@ class CardModel {
   static cardListmd(userInfo) {
     return new Promise(async (resolve, reject) => {
       db.query(
-        "select card.card_name,card.card_num,card.pay_card,cardlist.url " +
-          "from card,cardlist " +
-          "where card.card_name=cardlist.card_name and id=? AND cardlist.card_bin=SUBSTR(card.card_num,1,6);  ",
+        "SELECT distinct card.id, card.card_name, card.card_num,card.pay_card,cardlist.url from card,cardlist where card.card_name=cardlist.card_name AND card.id=? AND (cardlist.card_bin=SUBSTR(card.card_num,1,6) OR cardlist.card_bin='');",
         [userInfo.id],
         (err, data) => {
           if (err) {
-            reject({ success: false, message: err });
+            reject({ success: false, card: err });
           } else {
             resolve({ success: true, card: data });
           }
