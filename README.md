@@ -30,6 +30,9 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
 |POST /auth|이메일 인증 보내기|\- email : string|\- success : boolean<br/>\- message : string|
 |POST /auth-check|이메일 인증 확인|\- email : string<br/>\- auth_number : string|\- success : boolean<br/>\- message : string| 
 |POST /card-regist|카드 등록(빌링키 발급, 테스트 API 사용으로 국민카드는 등록 불가)|\-card_number : string<br/>(카드번호)<br/><br/>\- expiry : string <br/>(카드유효기간 – yyyymm)<br/><br/>\- birth : string<br/>(생년월일 6자리)<br/><br/>\- pwd_2digit : string<br/>(카드 비밀번호 앞 두자리)<br/><br/>\- id : string<br/>\- certification : boolean<br/>(이메일 인증 여부)<br/><br/>|\- success : boolean <br/>\- message : string|
+|DELETE /card-delete|카드 삭제|\- id : string<br/>\- card_num : string|\- success : boolean<br/>\- message : string|
+|POST /pay|결제|- id : string|\- success : boolean <br/>\- message : string|
+|GET /pay-list|결제 내역|(params)<br/>\- id : string<br/>\- year : number<br/>\- month : number<br/>|\- success : boolean<br/>\- data : object<br/>(date : string<br/>fee : string)<br/><br/>\- card : string<br/>\- total : number|
 
 
 
