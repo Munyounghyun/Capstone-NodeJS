@@ -27,6 +27,9 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
 |POST /register|회원가입|\- id : string<br/>\- pwd : string<br/>\- name : string<br/>\- email : string(이메일 인증 용도)<br/>\- birth : string<br/>(생년월일 yyyymmdd , 결제 시 어른, 청소년, 아이 구분하기 위한 용도)<br/>\- certification : boolean(이메일 인증 여부)<br/>|\- success : boolean <br/> \- message : string|  
 |GET /find-id|아이디 찾기|(params)<br/>\- name : string<br/>\- email : string<br/>\- certification : boolean<br/>(이메일 인증 여부)|\- success : boolean<br/>\- message : string|   
 |DELETE /delete|회원 삭제|\- id : string<br/>\- pwd : string|\- success : boolean <br/>\- message : string|
+|POST /auth|이메일 인증 보내기|\- email : string|\- success : boolean<br/>\- message : string|
+|POST /auth-check|이메일 인증 확인|\- email : string<br/>\- auth_number : string|\- success : boolean<br/>\- message : string| 
+|POST /card-regist|카드 등록(빌링키 발급, 테스트 API 사용으로 국민카드는 등록 불가)|\-card_number : string<br/>(카드번호)<br/><br/>\- expiry : string <br/>(카드유효기간 – yyyymm)<br/><br/>\- birth : string<br/>(생년월일 6자리)<br/><br/>\- pwd_2digit : string<br/>(카드 비밀번호 앞 두자리)<br/><br/>\- id : string<br/>\- certification : boolean<br/>(이메일 인증 여부)<br/><br/>|\- success : boolean <br/>\- message : string|
 
 
 
