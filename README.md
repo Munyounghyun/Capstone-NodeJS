@@ -19,7 +19,7 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
 외부API : PortOne
 
 ### 서버
-  + API 명세서 - 추후에 추가 예정
+  + API 명세서
 
 |Endpoint|Description|Request|Response Data|  
 |:---:|:---:|:---|:---|
