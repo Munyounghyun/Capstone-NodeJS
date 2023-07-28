@@ -33,7 +33,7 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
 |DELETE /card-delete|카드 삭제|\- id : string<br/>\- card_num : string|\- success : boolean<br/>\- message : string|
 |POST /pay|결제|- id : string|\- success : boolean <br/>\- message : string|
 |GET /pay-list|결제 내역|(params)<br/>\- id : string<br/>\- year : number<br/>\- month : number<br/>|\- success : boolean<br/>\- data : object<br/>(date : string<br/>fee : string)<br/><br/>\- card : string<br/>\- total : number|
-
+|GET /card-list|등록된 카드 불러오기|(params)<br/>\- id : string|- success : boolean<br/><br/>\- card : object<br/>(card_name : string<br/>card_num : string<br/>pay_card : number<br/>url : string )
 
 
 ### 클라이언트
