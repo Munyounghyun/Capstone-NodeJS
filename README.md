@@ -18,6 +18,13 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
           <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white"><br/>
 외부API : PortOne
 
+### 흐름도
+
+<div align="center">
+  <img src="https://github.com/Munyounghyun/Capstone-NodeJS/assets/90823418/e42e99c0-b7b7-42ca-b198-ac38295b268e">
+</div>
+
+
 ### 서버
   + API 명세서
 
