@@ -1,12 +1,12 @@
 # 생체정보를 활용한 대중교통 승하차 시스템<br/>(정맥인식을 이용한 대중교통 승하차 시스템)
 ## 서버부분
 
-### 개발 목적
+### -개발 목적
 본 프로젝트의 최종목표는 대중교통 이용자들의 불편함을 해소하고, 더욱 편리하고 안전한 대중교통 이용환경을 제공하는 게 목표다.
 따라서 등록기와 인식기 두 개의 하드웨어를 개발하여 손바닥 정맥 인식 센서를 개발하는 게 첫 번째 목표이며, 이렇게 학습된 패턴을 관리하는 시스템을 구축하고,
 앱과의 연동을 통해 대중교통을 원활히 이용할 수 있도록 돕는 것이 목표라 볼 수 있다.
 
-### 개발 환경
+### -개발 환경
 서버 : <img src="https://img.shields.io/badge/Node.js-339933?style=flat&logo=Node.js&logoColor=white"><br/>
 클라이언트 : <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white"><br/>
 하드웨어 :  <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"><br/>
@@ -18,14 +18,14 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
           <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white"><br/>
 외부API : PortOne
 
-### 서비스 아키텍처
+### -서비스 아키텍처
 
 <div align="center">
   <img src="https://github.com/Munyounghyun/Capstone-NodeJS/assets/90823418/e42e99c0-b7b7-42ca-b198-ac38295b268e">
 </div>
 
 
-### 서버
+### -서버
   + API 명세서
 
 |Endpoint|Description|Request|Response Data|  
@@ -43,5 +43,5 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
 |GET /card-list|등록된 카드 불러오기|(params)<br/>\- id : string|- success : boolean<br/><br/>\- card : object<br/>(card_name : string<br/>card_num : string<br/>pay_card : number<br/>url : string )
 
 
-### 클라이언트
+### -클라이언트
 주소 : https://github.com/jUqItEr/HiFive.git
