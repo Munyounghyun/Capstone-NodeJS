@@ -32,7 +32,8 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
 |:---:|:---:|:---|:---|
 |POST /login|로그인|\- id : string <br/> \- pwd : string|\- success : boolean <br/>\- message : string <br/>\- name : string <br/>\- email : string|   
 |POST /register|회원가입|\- id : string<br/>\- pwd : string<br/>\- name : string<br/>\- email : string(이메일 인증 용도)<br/>\- birth : string<br/>(생년월일 yyyymmdd , 결제 시 어른, 청소년, 아이 구분하기 위한 용도)<br/>\- certification : boolean(이메일 인증 여부)<br/>|\- success : boolean <br/> \- message : string|  
-|GET /find-id|아이디 찾기|(params)<br/>\- name : string<br/>\- email : string<br/>\- certification : boolean<br/>(이메일 인증 여부)|\- success : boolean<br/>\- message : string|   
+|GET /find-id|아이디 찾기|(params)<br/>\- name : string<br/>\- email : string<br/>\- certification : boolean<br/>(이메일 인증 여부)|\- success : boolean<br/>\- id : string|
+|PUT /find-id|비밀번호 수정|<br/>\- id : string<br/>\- pwd : string<br/>(수정할 비밀번호)<br/>\- certification : boolean<br/>(이메일 인증 여부)|\- success : boolean<br/>\- message : string|   
 |DELETE /delete|회원 삭제|\- id : string<br/>\- pwd : string|\- success : boolean <br/>\- message : string|
 |POST /auth|이메일 인증 보내기|\- email : string|\- success : boolean<br/>\- message : string|
 |POST /auth-check|이메일 인증 확인|\- email : string<br/>\- auth_number : string|\- success : boolean<br/>\- message : string| 
@@ -40,6 +41,7 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
 |DELETE /card-delete|카드 삭제|\- id : string<br/>\- card_num : string|\- success : boolean<br/>\- message : string|
 |POST /pay|결제|- id : string|\- success : boolean <br/>\- message : string|
 |GET /pay-list|결제 내역|(params)<br/>\- id : string<br/>\- year : number<br/>\- month : number<br/>|\- success : boolean<br/>\- data : object<br/>(date : string<br/>fee : string)<br/><br/>\- card : string<br/>\- total : number|
+|PUT /change-card|결제 카드 변경|\- id : string <br/>\- card_num : string|\- success : boolean<br/>\- message : string|
 |GET /card-list|등록된 카드 불러오기|(params)<br/>\- id : string|- success : boolean<br/><br/>\- card : object<br/>(card_name : string<br/>card_num : string<br/>pay_card : number<br/>url : string )
 
 
