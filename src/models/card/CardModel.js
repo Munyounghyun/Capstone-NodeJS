@@ -183,9 +183,9 @@ class CardModel {
                   [customer_uid],
                   (err) => {
                     if (err) {
-                      reject({ success: true, message: "카드 삭제 실패" });
+                      reject({ success: false, message: "카드 삭제 실패" });
                     } else {
-                      resolve({ success: false, message: "카드 삭제 성공" });
+                      resolve({ success: true, message: "카드 삭제 성공" });
                     }
                   }
                 );

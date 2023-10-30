@@ -2,8 +2,6 @@ var express = require("express");
 var router = express.Router();
 const usersCtrl = require("../../controller/users/usersCtrl");
 const cardCtrl = require("../../controller/card/cardCtrl");
-const net = require("net");
-const db = require("../../config/db");
 
 //로그인
 router.post("/login", usersCtrl.login);
