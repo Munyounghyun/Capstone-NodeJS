@@ -46,4 +46,5 @@ Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=fl
 
 
 ### - 클라이언트
-주소 : https://github.com/jUqItEr/HiFive.git
+주소(이전 버전) : https://github.com/jUqItEr/HiFive.git
+주소(최신 버전) : https://github.com/Munyounghyun/Capstone-React-Native.git
