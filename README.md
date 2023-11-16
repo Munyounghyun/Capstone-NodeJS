@@ -8,7 +8,7 @@
 
 ### - 개발 환경
 서버 : <img src="https://img.shields.io/badge/Node.js-339933?style=flat&logo=Node.js&logoColor=white"><br/>
-클라이언트 : <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white"><br/>
+클라이언트 : <img src="https://img.shields.io/badge/React--Native-61DAFB?style=flat&logo=React&logoColor=white"><br/>
 하드웨어 :  <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"><br/>
 데이터베이스 :  <img src="https://img.shields.io/badge/MariaDB-003545?style=flat&logo=mariadb&logoColor=white"><br/>
 Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=flat&logo=androidstudio&logoColor=white">
