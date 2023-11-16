@@ -11,8 +11,7 @@
 클라이언트 : <img src="https://img.shields.io/badge/React--Native-61DAFB?style=flat&logo=React&logoColor=white"><br/>
 하드웨어 :  <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"><br/>
 데이터베이스 :  <img src="https://img.shields.io/badge/MariaDB-003545?style=flat&logo=mariadb&logoColor=white"><br/>
-Framwork : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=flat&logo=androidstudio&logoColor=white">
-          <img src="https://img.shields.io/badge/TensorFlow Lite-FF6F00?style=flat&logo=tensorflow&logoColor=white">
+Framwork :<img src="https://img.shields.io/badge/TensorFlow Lite-FF6F00?style=flat&logo=tensorflow&logoColor=white">
           <img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=flat&logo=opencv&logoColor=white">
           <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white">
           <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white"><br/>
